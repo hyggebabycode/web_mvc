@@ -197,7 +197,8 @@ public class AppointmentsController : Controller
             {
                 success = true,
                 message = "Cap nhat trang thai thanh cong.",
-                status = model.Status
+                status = model.Status,
+                statusLabel = StatusDisplay.Label(model.Status)
             });
         }
 

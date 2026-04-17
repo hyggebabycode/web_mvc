@@ -85,6 +85,12 @@ public class PetsController : Controller
             return NotFound();
         }
 
+        var currentUserId = User.GetUserId();
+        if (User.IsInRole(RoleNames.Customer) && pet.OwnerId != currentUserId)
+        {
+            return Forbid();
+        }
+
         ViewBag.UploadModel = new UploadPetImageViewModel { PetId = id };
         return View(pet);
     }

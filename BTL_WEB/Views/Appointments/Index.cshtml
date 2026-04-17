@@ -25,11 +25,11 @@
             {
                 if ((string?)ViewBag.Status == status)
                 {
-                    <option value="@status" selected>@status</option>
+                    <option value="@status" selected>@StatusDisplay.Label(status)</option>
                 }
                 else
                 {
-                    <option value="@status">@status</option>
+                    <option value="@status">@StatusDisplay.Label(status)</option>
                 }
             }
         </select>
@@ -64,7 +64,7 @@
             <td>@item.User.FullName</td>
             <td>@item.Pet.Name</td>
             <td>@item.Branch.BranchName</td>
-            <td>@item.Status</td>
+            <td><span class="badge @StatusDisplay.BadgeClass(item.Status)">@StatusDisplay.Label(item.Status)</span></td>
             <td>@string.Join(", ", item.AppointmentServices.Select(x => x.Service.ServiceName))</td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.AppointmentId" class="btn btn-sm btn-outline-info">Details</a>

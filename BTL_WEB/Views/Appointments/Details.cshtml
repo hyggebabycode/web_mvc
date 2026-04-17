@@ -24,7 +24,7 @@
             <p><strong>Pet:</strong> @Model.Pet.Name</p>
             <p><strong>Branch:</strong> @Model.Branch.BranchName</p>
             <p><strong>Date:</strong> @Model.AppointmentDateTime.ToString("g")</p>
-            <p><strong>Status:</strong> <span id="appointment-status-text">@Model.Status</span></p>
+            <p><strong>Status:</strong> <span id="appointment-status-text" class="badge @StatusDisplay.BadgeClass(Model.Status)">@StatusDisplay.Label(Model.Status)</span></p>
             <p><strong>Notes:</strong> @Model.Notes</p>
             @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
             {
@@ -38,11 +38,11 @@
                             {
                                 if (Model.Status == status)
                                 {
-                                    <option value="@status" selected>@status</option>
+                                    <option value="@status" selected>@StatusDisplay.Label(status)</option>
                                 }
                                 else
                                 {
-                                    <option value="@status">@status</option>
+                                    <option value="@status">@StatusDisplay.Label(status)</option>
                                 }
                             }
                         </select>
@@ -83,7 +83,7 @@
                     <tr>
                         <td>@item.PaymentDate.ToString("g")</td>
                         <td>@item.PaymentMethod</td>
-                        <td>@item.PaymentStatus</td>
+                        <td><span class="badge @StatusDisplay.BadgeClass(item.PaymentStatus)">@StatusDisplay.Label(item.PaymentStatus)</span></td>
                         <td>@item.Amount.ToString("N0")</td>
                     </tr>
                 }
@@ -115,7 +115,7 @@
                     return;
                 }
 
-                statusText.textContent = payload.status;
+                statusText.textContent = payload.statusLabel ?? payload.status;
                 messageBox.innerHTML = `<div class="alert alert-success mt-2">${payload.message}</div>`;
             });
         })();

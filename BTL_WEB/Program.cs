@@ -16,8 +16,13 @@ builder.Logging.AddConsole();
 builder.Services.AddDbContext<PetCareHubContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PetCareHubConnection")));
 
-builder.Services.AddDataProtection()
+var dataProtectionBuilder = builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "App_Data", "DataProtectionKeys")));
+
+if (OperatingSystem.IsWindows())
+{
+    dataProtectionBuilder.ProtectKeysWithDpapi();
+}
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -29,11 +34,45 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
+        options.Cookie.Name = ".PetCareHub.Auth";
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
         options.AccessDeniedPath = "/Account/AccessDenied";
+        options.Events.OnRedirectToLogin = context =>
+        {
+            if (context.Request.IsAjaxRequest())
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return context.Response.WriteAsJsonAsync(new
+                {
+                    success = false,
+                    message = "Vui lòng đăng nhập trước khi thực hiện thao tác này."
+                });
+            }
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            if (context.Request.IsAjaxRequest())
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return context.Response.WriteAsJsonAsync(new
+                {
+                    success = false,
+                    message = "Tài khoản của bạn không có quyền thực hiện thao tác này."
+                });
+            }
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
         options.SlidingExpiration = true;
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     });
 
 builder.Services.AddAuthorization(options =>
@@ -46,8 +85,19 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(8);
+    options.Cookie.Name = ".PetCareHub.Session";
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = ".PetCareHub.Antiforgery";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
 builder.Services.AddControllersWithViews()
@@ -76,9 +126,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
-
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();

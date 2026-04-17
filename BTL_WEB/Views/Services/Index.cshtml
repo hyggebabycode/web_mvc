@@ -72,7 +72,7 @@
             <td>@item.Category.CategoryName</td>
             <td>@item.Price.ToString("N0")</td>
             <td>@item.DurationMinutes min</td>
-            <td>@item.Status</td>
+            <td><span class="badge @StatusDisplay.BadgeClass(item.Status)">@StatusDisplay.Label(item.Status)</span></td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.ServiceId" class="btn btn-sm btn-outline-info">Details</a>
                 <a asp-action="Edit" asp-route-id="@item.ServiceId" class="btn btn-sm btn-outline-primary">Edit</a>

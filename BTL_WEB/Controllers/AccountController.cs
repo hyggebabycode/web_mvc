@@ -128,6 +128,12 @@ public class AccountController : Controller
             return View(model);
         }
 
+        if (string.Equals(user.PasswordHash, model.Password, StringComparison.Ordinal))
+        {
+            user.PasswordHash = _passwordHasher.Hash(model.Password);
+            await _context.SaveChangesAsync();
+        }
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
@@ -188,7 +194,7 @@ public class AccountController : Controller
     {
         if (User.IsInRole(RoleNames.Admin) || User.IsInRole(RoleNames.Staff))
         {
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("System", "Management");
         }
 
         return RedirectToAction("Index", "Home");

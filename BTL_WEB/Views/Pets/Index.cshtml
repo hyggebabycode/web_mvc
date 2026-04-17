@@ -32,27 +32,27 @@
             <option value="">All status</option>
             @if ((string?)ViewBag.AdoptionStatus == "Available")
             {
-                <option value="Available" selected>Available</option>
+                <option value="Available" selected>Có sẵn</option>
             }
             else
             {
-                <option value="Available">Available</option>
+                <option value="Available">Có sẵn</option>
             }
             @if ((string?)ViewBag.AdoptionStatus == "Pending")
             {
-                <option value="Pending" selected>Pending</option>
+                <option value="Pending" selected>Đang chờ</option>
             }
             else
             {
-                <option value="Pending">Pending</option>
+                <option value="Pending">Đang chờ</option>
             }
             @if ((string?)ViewBag.AdoptionStatus == "Adopted")
             {
-                <option value="Adopted" selected>Adopted</option>
+                <option value="Adopted" selected>Đã nhận nuôi</option>
             }
             else
             {
-                <option value="Adopted">Adopted</option>
+                <option value="Adopted">Đã nhận nuôi</option>
             }
         </select>
     </div>
@@ -98,8 +98,8 @@
             <td>@item.Species</td>
             <td>@item.Branch.BranchName</td>
             <td>@(item.Owner?.FullName ?? "-")</td>
-            <td>@item.AdoptionStatus</td>
-            <td>@item.Status</td>
+            <td><span class="badge @StatusDisplay.BadgeClass(item.AdoptionStatus)">@StatusDisplay.Label(item.AdoptionStatus)</span></td>
+            <td><span class="badge @StatusDisplay.BadgeClass(item.Status)">@StatusDisplay.Label(item.Status)</span></td>
             <td class="text-nowrap">
                 <a asp-action="Details" asp-route-id="@item.PetId" class="btn btn-sm btn-outline-info">Details</a>
                 @if (User.IsInRole("Admin") || User.IsInRole("Staff"))

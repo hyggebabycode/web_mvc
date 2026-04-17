@@ -1,118 +1,184 @@
-@using Microsoft.AspNetCore.Localization
-@using Microsoft.Extensions.Localization
-@inject IStringLocalizer<BTL_WEB.Resources.SharedResource> Localizer
-@{
-    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
-    var currentCulture = requestCulture?.RequestCulture.UICulture.Name ?? "vi-VN";
-}
+@using Microsoft.AspNetCore.Http
+@using BTL_WEB.Helpers
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>@ViewData["Title"] - PetCareHub</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600,700,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="~/LayoutPetcare/css/animate.css">
-    <link rel="stylesheet" href="~/LayoutPetcare/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="~/LayoutPetcare/css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="~/LayoutPetcare/css/magnific-popup.css">
-    <link rel="stylesheet" href="~/LayoutPetcare/css/bootstrap-datepicker.css">
-    <link rel="stylesheet" href="~/LayoutPetcare/css/jquery.timepicker.css">
-    <link rel="stylesheet" href="~/LayoutPetcare/css/flaticon.css">
-    <link rel="stylesheet" href="~/LayoutPetcare/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600,700,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/LayoutPetcare/css/animate.css" />
+    <link rel="stylesheet" href="~/LayoutPetcare/css/owl.carousel.min.css" />
+    <link rel="stylesheet" href="~/LayoutPetcare/css/owl.theme.default.min.css" />
+    <link rel="stylesheet" href="~/LayoutPetcare/css/magnific-popup.css" />
+    <link rel="stylesheet" href="~/LayoutPetcare/css/bootstrap-datepicker.css" />
+    <link rel="stylesheet" href="~/LayoutPetcare/css/jquery.timepicker.css" />
+    <link rel="stylesheet" href="~/LayoutPetcare/css/flaticon.css" />
+    <link rel="stylesheet" href="~/LayoutPetcare/css/style.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/BTL_WEB.styles.css" asp-append-version="true" />
+
+    <style>
+        .user-main-nav .nav-link,
+        .user-main-nav .dropdown-toggle {
+            white-space: nowrap;
+        }
+
+        .user-main-nav .user-search {
+            margin-bottom: 0;
+        }
+
+        .user-main-nav .user-search .input-group {
+            flex-wrap: nowrap;
+        }
+
+        .user-main-nav .user-search .form-control {
+            min-width: 170px;
+            height: 36px;
+            border-radius: 999px 0 0 999px;
+            border-right: 0;
+            margin: 0;
+        }
+
+        .user-main-nav .user-search .input-group-append .btn {
+            width: 40px;
+            height: 36px;
+            border-radius: 0 999px 999px 0;
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar-img,
+        .user-avatar-fallback {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d8f0de;
+        }
+
+        .user-avatar-fallback {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #28a745;
+            color: #fff;
+            font-weight: 700;
+            font-size: .9rem;
+        }
+    </style>
 </head>
 <body>
-    <div class="wrap">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 d-flex align-items-center">
-                    <p class="mb-0 phone pl-md-2">
-                        <a href="tel:+001234567" class="mr-2"><span class="fa fa-phone mr-1"></span> +00 1234 567</a>
-                        <a href="mailto:youremail@email.com"><span class="fa fa-paper-plane mr-1"></span> youremail@email.com</a>
-                    </p>
-                </div>
-                <div class="col-md-6 d-flex justify-content-md-end align-items-center">
-                    <form asp-controller="Language" asp-action="SetLanguage" method="post" class="mr-3">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString.ToString())" />
-                        <select name="culture" class="form-control form-control-sm" onchange="this.form.submit()">
-                            <option value="vi-VN" selected="@(currentCulture == "vi-VN")">@Localizer["Vietnamese"]</option>
-                            <option value="en-US" selected="@(currentCulture == "en-US")">@Localizer["English"]</option>
-                        </select>
-                    </form>
-                    <div class="social-media">
-                        <p class="mb-0 d-flex">
-                            <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-facebook"><i class="sr-only">Facebook</i></span></a>
-                            <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-twitter"><i class="sr-only">Twitter</i></span></a>
-                            <a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-instagram"><i class="sr-only">Instagram</i></span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @{
+        var isLoggedIn = Context.User.Identity?.IsAuthenticated == true;
+        var displayName = Context.User.FindFirst(ClaimNames.FullName)?.Value ?? Context.User.Identity?.Name ?? "Khách";
+        var avatarUrl = Context.Session.GetString("ProfileAvatarUrl");
+        var avatarInitial = string.IsNullOrWhiteSpace(displayName) ? "U" : displayName.Trim().Substring(0, 1).ToUpper();
+        var isStaffOrAdmin = Context.User.IsInRole(RoleNames.Admin) || Context.User.IsInRole(RoleNames.Staff);
+    }
 
-    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light user-main-nav" id="ftco-navbar">
         <div class="container">
             <a class="navbar-brand" asp-controller="Home" asp-action="Index"><span class="flaticon-pawprint-1 mr-2"></span>PetCareHub</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="fa fa-bars"></span> Menu
             </button>
             <div class="collapse navbar-collapse" id="ftco-nav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a asp-controller="Home" asp-action="Index" class="nav-link">@Localizer["Home"]</a></li>
-                    <li class="nav-item"><a asp-controller="Services" asp-action="Index" class="nav-link">Services</a></li>
-                    <li class="nav-item"><a asp-controller="Pets" asp-action="Index" class="nav-link">Pets</a></li>
-                    @if (User.Identity?.IsAuthenticated == true)
+                <ul class="navbar-nav mr-auto align-items-lg-center">
+                    <li class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Services" ? "active" : string.Empty)">
+                        <a asp-controller="Services" asp-action="Catalog" class="nav-link">Dịch vụ</a>
+                    </li>
+                    <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Pets" ? "active" : string.Empty)">
+                        <a asp-controller="Management" asp-action="Pets" class="nav-link">Thú cưng</a>
+                    </li>
+                    @if (isLoggedIn && isStaffOrAdmin)
                     {
-                        <li class="nav-item"><a asp-controller="Appointments" asp-action="Index" class="nav-link">@Localizer["Appointments"]</a></li>
-                        <li class="nav-item"><a asp-controller="AdoptionRequests" asp-action="Index" class="nav-link">@Localizer["Adoption"]</a></li>
-                        <li class="nav-item"><a asp-controller="Payments" asp-action="Index" class="nav-link">@Localizer["Payments"]</a></li>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
-                        {
-                            <li class="nav-item"><a asp-controller="Dashboard" asp-action="Index" class="nav-link">@Localizer["Dashboard"]</a></li>
-                        }
-                        <li class="nav-item">
-                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="nav-link btn btn-link p-0 border-0">Logout</button>
-                            </form>
+                        <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "System" ? "active" : string.Empty)">
+                            <a asp-controller="Management" asp-action="System" class="nav-link">Quản trị</a>
+                        </li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Appointments" ? "active" : string.Empty)">
+                            <a asp-controller="Management" asp-action="Appointments" class="nav-link">QL lịch hẹn</a>
+                        </li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Adoptions" ? "active" : string.Empty)">
+                            <a asp-controller="Management" asp-action="Adoptions" class="nav-link">QL nhận nuôi</a>
                         </li>
                     }
                     else
                     {
-                        <li class="nav-item"><a asp-controller="Account" asp-action="Login" class="nav-link">Login</a></li>
-                        <li class="nav-item"><a asp-controller="Account" asp-action="Register" class="nav-link">Register</a></li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Appointments" ? "active" : string.Empty)">
+                            <a asp-controller="Management" asp-action="Appointments" class="nav-link">Lịch hẹn</a>
+                        </li>
+                        <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : string.Empty)">
+                            <a asp-controller="Home" asp-action="Profile" class="nav-link">Hồ sơ cá nhân</a>
+                        </li>
+                    }
+                </ul>
+
+                <form class="form-inline user-search mx-lg-3 my-2 my-lg-0" method="get" asp-controller="Management" asp-action="Pets">
+                    <div class="input-group input-group-sm">
+                        <input type="search" class="form-control" name="searchTerm" placeholder="Tìm thú cưng" aria-label="Tìm thú cưng" />
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit" aria-label="Tìm thú cưng">
+                                <span class="fa fa-search"></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+                    @if (isLoggedIn)
+                    {
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @if (!string.IsNullOrWhiteSpace(avatarUrl))
+                                {
+                                    <img src="@avatarUrl" alt="Avatar" class="user-avatar-img mr-2" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
+                                    <span class="user-avatar-fallback mr-2" style="display:none;">@avatarInitial</span>
+                                }
+                                else
+                                {
+                                    <span class="user-avatar-fallback mr-2">@avatarInitial</span>
+                                }
+                                <span class="text-nowrap">@displayName</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" asp-controller="Services" asp-action="Catalog">Dịch vụ</a>
+                                <a class="dropdown-item" asp-controller="Management" asp-action="Pets">Thú cưng</a>
+                                @if (isStaffOrAdmin)
+                                {
+                                    <a class="dropdown-item" asp-controller="Management" asp-action="System">Trang quản trị</a>
+                                    <a class="dropdown-item" asp-controller="Management" asp-action="Appointments">Quản lý lịch hẹn</a>
+                                    <a class="dropdown-item" asp-controller="Management" asp-action="Adoptions">Quản lý nhận nuôi</a>
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item" asp-controller="Management" asp-action="Appointments">Lịch hẹn của tôi</a>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="Dashboard">Tổng quan</a>
+                                }
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-controller="Home" asp-action="Profile">Chỉnh sửa hồ sơ</a>
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                    <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                </form>
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a asp-controller="Account" asp-action="Login" class="nav-link">Đăng nhập</a></li>
+                        <li class="nav-item"><a asp-controller="Account" asp-action="Register" class="nav-link">Đăng ký</a></li>
                     }
                 </ul>
             </div>
         </div>
     </nav>
 
-    @if (ViewData["HidePageHero"] as bool? != true)
-    {
-        <section class="hero-wrap hero-wrap-2 app-page-hero" style="height: 240px; min-height: 240px; background-image: url('@Url.Content("~/LayoutPetcare/images/bg_2.jpg")'); background-position: center center;" data-stellar-background-ratio="0.5">
-            <div class="overlay"></div>
-            <div class="container">
-                <div class="row no-gutters slider-text align-items-center" style="height: 240px; min-height: 240px;">
-                    <div class="col-md-9">
-                        <p class="breadcrumbs mb-2"><span class="mr-2"><a asp-controller="Home" asp-action="Index">Home <i class="ion-ios-arrow-forward"></i></a></span></p>
-                        <h1 class="mb-0 bread">@ViewData["Title"]</h1>
-                    </div>
-                </div>
-            </div>
-        </section>
-    }
-
-    <main role="main" style="background: #f8f9fa; min-height: calc(100vh - 180px); padding-bottom: 48px;">
-        @RenderBody()
-    </main>
-
-    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" /><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00" /></svg></div>
+    @RenderBody()
 
     <script src="~/LayoutPetcare/js/jquery.min.js"></script>
     <script src="~/LayoutPetcare/js/jquery-migrate-3.0.1.min.js"></script>
@@ -128,7 +194,6 @@
     <script src="~/LayoutPetcare/js/jquery.magnific-popup.min.js"></script>
     <script src="~/LayoutPetcare/js/scrollax.min.js"></script>
     <script src="~/LayoutPetcare/js/main.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

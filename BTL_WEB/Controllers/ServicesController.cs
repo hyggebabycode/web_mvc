@@ -1,5 +1,6 @@
 using BTL_WEB.Helpers;
 using BTL_WEB.Models;
+using BTL_WEB.Models.ViewModels;
 using BTL_WEB.ViewModels.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,35 @@ public class ServicesController : Controller
             .FirstOrDefaultAsync(x => x.ServiceId == id);
 
         return service is null ? NotFound() : View(service);
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> Catalog()
+    {
+        var groups = await _context.ServiceCategories
+            .AsNoTracking()
+            .OrderBy(x => x.CategoryName)
+            .Select(x => new ServiceCategoryGroupViewModel
+            {
+                CategoryId = x.CategoryId,
+                CategoryName = x.CategoryName,
+                Services = x.Services
+                    .Where(s => s.Status == "Active")
+                    .OrderBy(s => s.ServiceName)
+                    .Select(s => new ServiceCardViewModel
+                    {
+                        ServiceId = s.ServiceId,
+                        ServiceName = s.ServiceName,
+                        Description = s.Description,
+                        Price = s.Price,
+                        DurationMinutes = s.DurationMinutes
+                    })
+                    .ToList()
+            })
+            .ToListAsync();
+
+        return View(new ServiceCatalogViewModel { Groups = groups });
     }
 
     public async Task<IActionResult> Create()

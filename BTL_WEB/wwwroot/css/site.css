@@ -30,20 +30,6 @@ body {
   text-align: start;
 }
 
-.app-page-hero.hero-wrap.hero-wrap-2 {
-  height: 260px;
-  background-position: center center;
-}
-
-.app-page-hero.hero-wrap.hero-wrap-2 .slider-text {
-  height: 260px;
-}
-
-.app-page-hero .breadcrumbs,
-.app-page-hero .bread {
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.28);
-}
-
 .app-auth-section.ftco-section {
   padding: 4em 0;
   min-height: 420px;
@@ -95,11 +81,6 @@ body {
 }
 
 @media (max-width: 767.98px) {
-  .app-page-hero.hero-wrap.hero-wrap-2,
-  .app-page-hero.hero-wrap.hero-wrap-2 .slider-text {
-    height: 220px;
-  }
-
   .app-auth-section.ftco-section {
     padding: 3em 0;
   }
@@ -111,4 +92,42 @@ body {
   .auth-card {
     padding: 28px 20px;
   }
+
+  .table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
+
+  .btn,
+  .form-control,
+  .form-select {
+    max-width: 100%;
+  }
+
+  .d-flex.gap-2,
+  .d-flex.flex-wrap {
+    row-gap: .5rem;
+  }
+
+  .ftco-section .container {
+    max-width: 100%;
+  }
+}
+
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+}
+
+.badge {
+  border-radius: 8px;
+  line-height: 1.2;
+  white-space: nowrap;
 }

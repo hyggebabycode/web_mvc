@@ -5,7 +5,7 @@
 <h1 class="h3 mb-3">Payment #@Model.PaymentId</h1>
 <p><strong>Amount:</strong> @Model.Amount.ToString("N0")</p>
 <p><strong>Method:</strong> @Model.PaymentMethod</p>
-<p><strong>Status:</strong> @Model.PaymentStatus</p>
+<p><strong>Status:</strong> <span class="badge @StatusDisplay.BadgeClass(Model.PaymentStatus)">@StatusDisplay.Label(Model.PaymentStatus)</span></p>
 <p><strong>Date:</strong> @Model.PaymentDate.ToString("g")</p>
 <p><strong>Transaction Code:</strong> @Model.TransactionCode</p>
 @if (Model.Appointment != null)

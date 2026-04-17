@@ -1,85 +1,131 @@
-@using BTL_WEB.Models
-@{
-    ViewData["Title"] = "Home Page";
-    Layout = "~/Views/Shared/_LayoutPetcarehub.cshtml";
+﻿@model BTL_WEB.Models.ViewModels.HomePageViewModel
 
-    var services = ViewBag.FeaturedServices as List<Service> ?? new List<Service>();
-    var pets = ViewBag.FeaturedPets as List<Pet> ?? new List<Pet>();
-    var packageImages = new[] { "pricing-1.jpg", "pricing-2.jpg", "pricing-3.jpg" };
+@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/Views/Shared/_LayoutPetcarehub.cshtml";
 }
 
-<section class="ftco-section bg-light" id="pricing">
+<section class="hero-wrap js-fullheight" style="background-image: url('@Url.Content("~/LayoutPetcare/images/bg_1.jpg")');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
     <div class="container">
-        <div class="row justify-content-center pb-5 mb-3">
-            <div class="col-md-7 heading-section text-center ftco-animate">
-                <h2><span style="background:#2f5cc7;color:#fff;padding:8px 16px;display:inline-block;">Dịch vụ nổi bật</span></h2>
+        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
+            <div class="col-md-11 ftco-animate text-center">
+                <h1 class="mb-4">Highest Quality Care For Pets You'll Love</h1>
+                <p><a asp-controller="Services" asp-action="Catalog" class="btn btn-primary mr-md-4 py-3 px-4">Learn more</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light pb-0 pt-5">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-9 text-center heading-section">
+                <h2 class="mb-3">PetCareHub Portal</h2>
+                <p>Nền tảng đặt lịch và chăm sóc thú cưng hiện đại dành cho mọi chủ nuôi.</p>
+            </div>
+        </div>
+
+        <div class="row stat-section mx-0 mb-5">
+            <div class="col-md-3 col-6 stat-box">
+                <div class="stat-icon"><span class="fa fa-paw"></span></div>
+                <h4>@Model.PetsCount</h4>
+                <p>Pets</p>
+            </div>
+            <div class="col-md-3 col-6 stat-box">
+                <div class="stat-icon"><span class="fa fa-building"></span></div>
+                <h4>@Model.BranchesCount</h4>
+                <p>Branches</p>
+            </div>
+            <div class="col-md-3 col-6 stat-box">
+                <div class="stat-icon"><span class="fa fa-user-md"></span></div>
+                <h4>@Model.StaffCount</h4>
+                <p>Staff</p>
+            </div>
+            <div class="col-md-3 col-6 stat-box">
+                <div class="stat-icon"><span class="fa fa-heart"></span></div>
+                <h4>@Model.HappyClients</h4>
+                <p>Happy Clients</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-10 text-center heading-section">
+                <h3>Dịch vụ nổi bật</h3>
+            </div>
+        </div>
+        <div class="row mb-5">
+            @foreach (var service in Model.FeaturedServices)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card border-0 shadow-sm h-100 featured-service-card">
+                        <div class="card-body d-flex flex-column">
+                            <div class="service-icon mb-2"><span class="fa fa-medkit"></span></div>
+                            <h5>@service.ServiceName</h5>
+                            <p class="text-muted">@(string.IsNullOrWhiteSpace(service.Description) ? "Dịch vụ chăm sóc chuyên nghiệp cho thú cưng." : service.Description)</p>
+                            <p class="mb-3"><strong>@service.Price.ToString("N0") đ</strong></p>
+                            <a asp-controller="Services" asp-action="Catalog" class="btn btn-outline-success mt-auto">Tìm hiểu thêm</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-10 text-center heading-section">
+                <h3>Khách hàng nói gì</h3>
             </div>
         </div>
         <div class="row">
-            @if (services.Any())
+            @foreach (var item in Model.Testimonials)
             {
-                @for (var i = 0; i < services.Count; i++)
-                {
-                    var service = services[i];
-                    var image = packageImages[i % packageImages.Length];
-                    <div class="col-md-4 ftco-animate">
-                        <div class="block-7">
-                            <div class="img" style="background-image: url('@Url.Content($"~/LayoutPetcare/images/{image}")'); height: 345px; background-size: cover; background-position: center;"></div>
-                            <div class="text-center p-4">
-                                <span class="excerpt d-block" style="color:#00b050;font-weight:600;">@service.ServiceName</span>
-                                <span class="price d-block">@service.Price.ToString("N0") đ</span>
-                                <p>@(service.Description ?? service.Category.CategoryName)</p>
-                                <a class="btn btn-primary" asp-controller="Services" asp-action="Details" asp-route-id="@service.ServiceId">Xem chi tiết</a>
-                            </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <p class="mb-2">"@item.Comment"</p>
+                            <p class="mb-1 text-warning">@(new string('★', item.Rating))</p>
+                            <small class="text-muted">- @item.CustomerName</small>
                         </div>
                     </div>
-                }
-            }
-            else
-            {
-                <div class="col-12 text-center">
-                    <p>Chưa có dịch vụ active trong database.</p>
-                    <a class="btn btn-primary" asp-controller="Services" asp-action="Create">Thêm dịch vụ</a>
                 </div>
             }
         </div>
     </div>
 </section>
 
-<section class="ftco-section" id="pets-from-backend">
-    <div class="container">
-        <div class="row justify-content-center pb-5 mb-3">
-            <div class="col-md-7 heading-section text-center ftco-animate">
-                <h2>Thú cưng đang chờ nhận nuôi</h2>
-            </div>
-        </div>
-        <div class="row">
-            @if (pets.Any())
-            {
-                @foreach (var pet in pets)
-                {
-                    var imageUrl = pet.PetImages.FirstOrDefault(x => x.IsPrimary)?.ImageUrl
-                        ?? pet.PetImages.FirstOrDefault()?.ImageUrl
-                        ?? Url.Content("~/LayoutPetcare/images/gallery-1.jpg");
-                    <div class="col-md-4 ftco-animate">
-                        <div class="work mb-4 img d-flex align-items-end" style="background-image: url('@imageUrl');">
-                            <div class="desc w-100 px-4">
-                                <div class="text w-100 mb-3">
-                                    <span>@pet.Species</span>
-                                    <h2><a asp-controller="Pets" asp-action="Details" asp-route-id="@pet.PetId">@pet.Name</a></h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="col-12 text-center">
-                    <p>Chưa có thú cưng available trong database.</p>
-                    <a class="btn btn-primary" asp-controller="Pets" asp-action="Create">Thêm thú cưng</a>
-                </div>
-            }
-        </div>
-    </div>
-</section>
+<style>
+    .stat-section {
+        background: #ecf8ef;
+        border: 1px solid #d3ebd8;
+        border-radius: 12px;
+        padding: 15px 5px;
+    }
+    .stat-box {
+        text-align: center;
+        padding: 10px;
+    }
+    .stat-box h4 { color: #28a745; font-weight: 700; margin-bottom: 2px; }
+    .stat-box p { margin-bottom: 0; color: #5b6570; }
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #28a745;
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+    }
+    .featured-service-card .service-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #e8f7ed;
+        color: #28a745;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+</style>

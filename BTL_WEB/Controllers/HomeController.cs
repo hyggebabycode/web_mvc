@@ -1,5 +1,8 @@
 using System.Diagnostics;
+using System.Security.Claims;
+using BTL_WEB.Helpers;
 using BTL_WEB.Models;
+using BTL_WEB.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,26 +19,155 @@ namespace BTL_WEB.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.FeaturedServices = await _context.Services
-                .Include(x => x.Category)
+            var petsCount = await _context.Pets.AsNoTracking().CountAsync();
+            var branchesCount = await _context.Branches.AsNoTracking().CountAsync();
+            var staffCount = await _context.Staff.AsNoTracking().CountAsync();
+
+            var featuredServices = await _context.Services
+                .AsNoTracking()
                 .Where(x => x.Status == "Active")
                 .OrderBy(x => x.ServiceName)
                 .Take(3)
+                .Select(x => new HomeFeaturedServiceViewModel
+                {
+                    ServiceId = x.ServiceId,
+                    ServiceName = x.ServiceName,
+                    Description = x.Description,
+                    Price = x.Price
+                })
                 .ToListAsync();
 
-            ViewBag.FeaturedPets = await _context.Pets
-                .Include(x => x.PetImages)
-                .Where(x => x.Status == "Active" && x.AdoptionStatus == "Available")
-                .OrderByDescending(x => x.CreatedAt)
-                .Take(6)
-                .ToListAsync();
+            var model = new HomePageViewModel
+            {
+                PetsCount = petsCount,
+                BranchesCount = branchesCount,
+                StaffCount = staffCount,
+                HappyClients = Math.Max(120, petsCount * 3),
+                FeaturedServices = featuredServices,
+                Testimonials =
+                [
+                    new HomeTestimonialViewModel { CustomerName = "Ngoc Anh", Comment = "Dich vu rat tot, thu cung duoc cham soc ky.", Rating = 5 },
+                    new HomeTestimonialViewModel { CustomerName = "Minh Khang", Comment = "Dat lich nhanh va nhan vien tu van nhiet tinh.", Rating = 5 },
+                    new HomeTestimonialViewModel { CustomerName = "Bao Tran", Comment = "Khong gian sach se, be nha minh rat thich.", Rating = 4 }
+                ]
+            };
 
-            return View();
+            return View(model);
         }
 
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Dashboard()
+        {
+            var currentUser = await ResolveCurrentUserAsync();
+            if (currentUser is null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (User.IsInRole(RoleNames.Admin) || User.IsInRole(RoleNames.Staff))
+            {
+                return RedirectToAction("System", "Management");
+            }
+
+            var myPets = await _context.Pets
+                .AsNoTracking()
+                .Where(x => x.OwnerId == currentUser.UserId)
+                .OrderByDescending(x => x.CreatedAt)
+                .Take(8)
+                .Select(x => new DashboardPetViewModel
+                {
+                    PetId = x.PetId,
+                    Name = x.Name,
+                    Species = x.Species,
+                    Breed = x.Breed,
+                    Status = x.Status,
+                    AdoptionStatus = x.AdoptionStatus
+                })
+                .ToListAsync();
+
+            var upcomingAppointments = await _context.Appointments
+                .AsNoTracking()
+                .Where(x => x.UserId == currentUser.UserId && x.AppointmentDateTime >= DateTime.Now)
+                .OrderBy(x => x.AppointmentDateTime)
+                .Take(8)
+                .Select(x => new DashboardAppointmentViewModel
+                {
+                    AppointmentId = x.AppointmentId,
+                    AppointmentDateTime = x.AppointmentDateTime,
+                    PetName = x.Pet.Name,
+                    Status = x.Status,
+                    ServiceName = x.AppointmentServices
+                        .OrderBy(s => s.Service.ServiceName)
+                        .Select(s => s.Service.ServiceName)
+                        .FirstOrDefault() ?? "Chua chon dich vu"
+                })
+                .ToListAsync();
+
+            return View(new UserDashboardViewModel
+            {
+                FullName = currentUser.FullName,
+                Email = currentUser.Email,
+                Pets = myPets,
+                UpcomingAppointments = upcomingAppointments
+            });
+        }
+
+        public async Task<IActionResult> Profile()
+        {
+            var currentUser = await ResolveCurrentUserAsync();
+            if (currentUser is null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            return View(new UserProfileViewModel
+            {
+                FullName = currentUser.FullName,
+                Phone = currentUser.Phone,
+                Email = currentUser.Email,
+                AvatarUrl = HttpContext.Session.GetString("ProfileAvatarUrl")
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(UserProfileViewModel input)
+        {
+            var currentUser = await ResolveCurrentUserAsync(track: true);
+            if (currentUser is null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            currentUser.FullName = (input.FullName ?? string.Empty).Trim();
+            currentUser.Phone = string.IsNullOrWhiteSpace(input.Phone) ? null : input.Phone.Trim();
+            currentUser.Email = (input.Email ?? string.Empty).Trim();
+            HttpContext.Session.SetString("ProfileAvatarUrl", (input.AvatarUrl ?? string.Empty).Trim());
+
+            await _context.SaveChangesAsync();
+            TempData["ProfileSaved"] = "Da cap nhat ho so thanh cong.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        private async Task<User?> ResolveCurrentUserAsync(bool track = false)
+        {
+            var claimValue = User.FindFirstValue(ClaimNames.UserId) ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claimValue, out var userId))
+            {
+                return null;
+            }
+
+            var query = _context.Users.AsQueryable();
+            if (!track)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.FirstOrDefaultAsync(x => x.UserId == userId && x.Status == "Active");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

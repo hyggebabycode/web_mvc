@@ -27,7 +27,7 @@
                 <p><strong>Species:</strong> @Model.Species</p>
                 <p><strong>Branch:</strong> @Model.Branch.BranchName</p>
                 <p><strong>Owner:</strong> @(Model.Owner?.FullName ?? "-")</p>
-                <p><strong>Adoption status:</strong> @Model.AdoptionStatus</p>
+                <p><strong>Adoption status:</strong> <span class="badge @StatusDisplay.BadgeClass(Model.AdoptionStatus)">@StatusDisplay.Label(Model.AdoptionStatus)</span></p>
                 <p><strong>Health status:</strong> @Model.HealthStatus</p>
                 <p><strong>Description:</strong> @Model.Description</p>
             </div>
@@ -111,7 +111,7 @@
                     {
                         <tr>
                             <td>@item.AppointmentDateTime.ToString("g")</td>
-                            <td>@item.Status</td>
+                            <td><span class="badge @StatusDisplay.BadgeClass(item.Status)">@StatusDisplay.Label(item.Status)</span></td>
                             <td>@string.Join(", ", item.AppointmentServices.Select(x => x.Service.ServiceName))</td>
                         </tr>
                     }

@@ -25,11 +25,11 @@
             {
                 if ((string?)ViewBag.Status == status)
                 {
-                    <option value="@status" selected>@status</option>
+                    <option value="@status" selected>@StatusDisplay.Label(status)</option>
                 }
                 else
                 {
-                    <option value="@status">@status</option>
+                    <option value="@status">@StatusDisplay.Label(status)</option>
                 }
             }
         </select>
@@ -63,7 +63,7 @@
             <td>@item.RequestDate.ToString("g")</td>
             <td>@item.User.FullName</td>
             <td>@item.Pet.Name</td>
-            <td>@item.Status</td>
+            <td><span class="badge @StatusDisplay.BadgeClass(item.Status)">@StatusDisplay.Label(item.Status)</span></td>
             <td>@(item.ReviewedByStaff?.User.FullName ?? "-")</td>
             <td><a asp-action="Details" asp-route-id="@item.RequestId" class="btn btn-sm btn-outline-info">Details</a></td>
         </tr>

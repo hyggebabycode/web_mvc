@@ -21,19 +21,18 @@ public class AdoptionWorkflowService : IAdoptionWorkflowService
             return (false, "Thu cung khong ton tai.", null);
         }
 
-        if (pet.AdoptionStatus != "Available")
+        if (!string.Equals(pet.AdoptionStatus, "Available", StringComparison.OrdinalIgnoreCase))
         {
             return (false, "Pet hien khong o trang thai co the nhan nuoi.", null);
         }
 
-        var duplicatePending = await _context.AdoptionRequests.AnyAsync(x =>
-            x.PetId == model.PetId &&
-            x.UserId == currentUserId &&
-            x.Status == "Pending");
+        var duplicatePending = await _context.AdoptionRequests.AnyAsync(x => x.PetId == model.PetId && x.Status == "Pending");
 
         if (duplicatePending)
         {
-            return (false, "Ban da co yeu cau Pending cho pet nay.", null);
+            pet.AdoptionStatus = "Pending";
+            await _context.SaveChangesAsync();
+            return (false, "Pet nay da co yeu cau nhan nuoi dang cho xu ly.", null);
         }
 
         var request = new AdoptionRequest
@@ -46,6 +45,7 @@ public class AdoptionWorkflowService : IAdoptionWorkflowService
         };
 
         _context.AdoptionRequests.Add(request);
+        pet.AdoptionStatus = "Pending";
         await _context.SaveChangesAsync();
         return (true, null, request.RequestId);
     }
@@ -76,9 +76,10 @@ public class AdoptionWorkflowService : IAdoptionWorkflowService
 
         if (string.Equals(model.Action, "Approve", StringComparison.OrdinalIgnoreCase))
         {
-            if (request.Pet.AdoptionStatus != "Available")
+            if (!string.Equals(request.Pet.AdoptionStatus, "Available", StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(request.Pet.AdoptionStatus, "Pending", StringComparison.OrdinalIgnoreCase))
             {
-                return (false, "Pet khong con o trang thai Available.");
+                return (false, "Pet khong con o trang thai co the duyet nhan nuoi.");
             }
 
             request.Status = "Approved";
@@ -99,6 +100,7 @@ public class AdoptionWorkflowService : IAdoptionWorkflowService
         else if (string.Equals(model.Action, "Reject", StringComparison.OrdinalIgnoreCase))
         {
             request.Status = "Rejected";
+            request.Pet.AdoptionStatus = "Available";
         }
         else
         {

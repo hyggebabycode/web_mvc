@@ -19,7 +19,7 @@
         <div class="card"><div class="card-body">
             <p><strong>User:</strong> @Model.User.FullName</p>
             <p><strong>Pet:</strong> @Model.Pet.Name</p>
-            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Status:</strong> <span class="badge @StatusDisplay.BadgeClass(Model.Status)">@StatusDisplay.Label(Model.Status)</span></p>
             <p><strong>Message:</strong> @Model.Message</p>
             <p><strong>Reviewed At:</strong> @(Model.ReviewedAt?.ToString("g") ?? "-")</p>
             <p><strong>Reviewed By:</strong> @(Model.ReviewedByStaff?.User.FullName ?? "-")</p>
@@ -27,7 +27,7 @@
     </div>
     <div class="col-md-6">
         <div class="card"><div class="card-body">
-            <p><strong>Pet Adoption Status:</strong> @Model.Pet.AdoptionStatus</p>
+            <p><strong>Pet Adoption Status:</strong> <span class="badge @StatusDisplay.BadgeClass(Model.Pet.AdoptionStatus)">@StatusDisplay.Label(Model.Pet.AdoptionStatus)</span></p>
             @if (Model.AdoptionContract != null)
             {
                 <p><strong>Contract:</strong> #@Model.AdoptionContract.ContractId</p>

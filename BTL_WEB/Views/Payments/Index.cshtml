@@ -18,7 +18,7 @@
             <td>@item.PaymentDate.ToString("g")</td>
             <td>@(item.AppointmentId.HasValue ? $"Appointment #{item.AppointmentId}" : $"Contract #{item.ContractId}")</td>
             <td>@item.PaymentMethod</td>
-            <td>@item.PaymentStatus</td>
+            <td><span class="badge @StatusDisplay.BadgeClass(item.PaymentStatus)">@StatusDisplay.Label(item.PaymentStatus)</span></td>
             <td>@item.Amount.ToString("N0")</td>
             <td><a asp-action="Details" asp-route-id="@item.PaymentId" class="btn btn-sm btn-outline-info">Details</a></td>
         </tr>
