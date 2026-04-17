@@ -128,6 +128,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
     app.UseHttpsRedirection();
 }
+else
+{
+    // In development show detailed exceptions to help debug
+    app.UseDeveloperExceptionPage();
+}
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
@@ -137,5 +142,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Lightweight health endpoint to verify the app is responsive without involving EF or MVC
+app.MapGet("/health", () => Results.Ok(new { status = "OK" }));
 
 app.Run();

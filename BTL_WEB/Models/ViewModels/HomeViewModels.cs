@@ -6,8 +6,8 @@ public class HomePageViewModel
     public int BranchesCount { get; set; }
     public int StaffCount { get; set; }
     public int HappyClients { get; set; }
-    public List<HomeFeaturedServiceViewModel> FeaturedServices { get; set; } = [];
-    public List<HomeTestimonialViewModel> Testimonials { get; set; } = [];
+    public List<HomeFeaturedServiceViewModel> FeaturedServices { get; set; } = new List<HomeFeaturedServiceViewModel>();
+    public List<HomeTestimonialViewModel> Testimonials { get; set; } = new List<HomeTestimonialViewModel>();
 }
 
 public class HomeFeaturedServiceViewModel

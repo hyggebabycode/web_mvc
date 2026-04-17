@@ -44,12 +44,12 @@ namespace BTL_WEB.Controllers
                 StaffCount = staffCount,
                 HappyClients = Math.Max(120, petsCount * 3),
                 FeaturedServices = featuredServices,
-                Testimonials =
-                [
+                Testimonials = new List<HomeTestimonialViewModel>
+                {
                     new HomeTestimonialViewModel { CustomerName = "Ngoc Anh", Comment = "Dich vu rat tot, thu cung duoc cham soc ky.", Rating = 5 },
                     new HomeTestimonialViewModel { CustomerName = "Minh Khang", Comment = "Dat lich nhanh va nhan vien tu van nhiet tinh.", Rating = 5 },
                     new HomeTestimonialViewModel { CustomerName = "Bao Tran", Comment = "Khong gian sach se, be nha minh rat thich.", Rating = 4 }
-                ]
+                }
             };
 
             return View(model);
